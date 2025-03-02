@@ -1,0 +1,630 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramadan Timetable</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background: linear-gradient(to bottom, #12232E, #007B83);
+            color: white;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #FFD700; /* Golden color for heading */
+        }
+
+        .fasting-info {
+            margin: 20px auto;
+            padding: 20px;
+            background: #FFD700;
+            color: black;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+        }
+
+        .countdown {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .calendar {
+            margin: 20px auto;
+            width: 95%;
+            max-width: 1000px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            color: black;
+            table-layout: fixed;
+            margin: 0 auto;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        th {
+            background: #008080;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .highlight {
+            background: #FFD700 !important;
+            font-weight: bold;
+        }
+
+        .dua-container, .ayah-container {
+            margin: 20px auto;
+            padding: 20px;
+            background: #008080;
+            color: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+        }
+
+        .dua-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .dua-text .label {
+            color: white;
+        }
+
+        .dua-text .text {
+            color: #00FF00;
+            transition: color 0.5s ease;
+        }
+
+        .ayah-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD700;
+            animation: fade 5s infinite;
+        }
+
+        @keyframes fade {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .fasting-info {
+                width: 95%;
+                font-size: 1rem;
+                padding: 15px;
+            }
+
+            .countdown {
+                font-size: 1.2rem;
+            }
+
+            .calendar {
+                margin: 10px auto;
+                width: 100%;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .dua-container, .ayah-container {
+                font-size: 1rem;
+            }
+
+            .ayah-text {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .fasting-info {
+                font-size: 0.9rem;
+            }
+
+            .countdown {
+                font-size: 1rem;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .dua-container, .ayah-container {
+                font-size: 0.9rem;
+            }
+
+            .ayah-text {
+                font-size: 1rem;
+            }
+        }
+
+        /* Additional Styles for Surahs and Dua */
+        .surah-container {
+            margin: 20px auto;
+            padding: 20px;
+            background: #1E1E2E;
+            color: #E0DEF4;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            text-align: left;
+        }
+
+        .surah-container pre {
+            background: #1E1E2E;
+            color: #E0DEF4;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            border-left: 5px solid #CBA6F7;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+        }
+
+        .surah-container h2 {
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Ramadan Mubarak</h1>
+        <p>Bhookh aur pyaas ka ehsaas hai roza,
+Dil ko saaf karne ka ek raaz hai roza.
+Har sajde mein mile sukoon ka dariya,
+Har iftar mein ho rehmat ka jariya.</p>
+    </header>
+
+    <section class="fasting-info">
+        <h2>Today's Fast: <span id="currentDate"></span></h2>
+        <p><strong>Sehri:</strong> <span id="sehriTime"></span> | <strong>Iftar:</strong> <span id="iftarTime"></span></p>
+        <div class="countdown">Iftar in: <span id="iftarCountdown">Loading...</span></div>
+    </section>
+
+    <section class="dua-container">
+        <h2>Dua for Ramadan</h2>
+        <p class="dua-text" id="duaText">Loading dua...</p>
+    </section>
+
+    <section class="ayah-container">
+        <h2>Quranic Ayah</h2>
+        <p class="ayah-text" id="ayah"></p>
+    </section>
+
+    <section class="calendar">
+        <h2>Ramadan Fasting Schedule</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Roza</th>
+                    <th>Date</th>
+                    <th>Day</th>
+                    <th>Sehri</th>
+                    <th>Iftar</th>
+                </tr>
+            </thead>
+            <tbody id="fastingTable"></tbody>
+        </table>
+    </section>
+
+    <section class="surah-container">
+        <h2>Surah Al-Fatiha</h2>
+        <pre>
+Bismillahir Rahmanir Rahim  
+Alhamdu lillahi Rabbil ‘alamin,  
+Ar-Rahmanir-Rahim,  
+Maliki yawmi-d-din,  
+Iyyaka na’budu wa iyyaka nasta’in,  
+Ihdinas-siratal mustaqim,  
+Siratal lazina an’amta ‘alayhim,  
+Ghayril maghdubi ‘alayhim wa lad-dallin.  
+Ameen.
+        </pre>
+    </section>
+
+    <section class="surah-container">
+        <h2>Surah Ikhlas</h2>
+        <pre>
+Bismillahir Rahmanir Rahim  
+Qul huwallahu ahad,  
+Allahu-s-Samad,  
+Lam yalid wa lam yulad,  
+Wa lam yakun lahu kufuwan ahad.
+        </pre>
+    </section>
+
+    <section class="surah-container">
+        <h2>Surah Al-Falaq</h2>
+        <pre>
+Bismillahir Rahmanir Rahim  
+Qul a’uzu bi Rabbil-falaq,  
+Min sharri ma khalaq,  
+Wa min sharri ghasiqin iza waqab,  
+Wa min sharrin-naffasati fil-‘uqad,  
+Wa min sharri hasidin iza hasad.
+        </pre>
+    </section>
+
+    <section class="surah-container">
+        <h2>Surah An-Nas</h2>
+        <pre>
+Bismillahir Rahmanir Rahim  
+Qul a’uzu bi Rabbin-nas,  
+Malikin-nas,  
+Ilahin-nas,  
+Min sharril-waswasil-khannas,  
+Allazi yuwaswisu fi sudurin-nas,  
+Minal jinnati wan-nas.
+        </pre>
+    </section>
+
+    <section class="surah-container">
+        <h2>Namaz Ke Baad Ki Dua</h2>
+        <pre>
+          Rabbana Atina Fid Dunya'Hasanatanw-wa Fil Aakhirati,Hasanatanw-wa-Qina 'Azaaban-Naar
+
+
+Ya Allah!  
+Hum tere gunahgaar bande hain,  
+Teri rehmat ke mohtaj hain,  
+Hum se jo bhi ghaltiyan ho gayi,  
+Jo bhi gunah anjaane me ya jaane me ho gaye,  
+Ya Rabb, tu sab maaf farma de.  
+
+Ya Allah!  
+Tera karam na hota toh hum kahaan jaate?  
+Teri rehmat na hoti toh hum mitt jaate!  
+Bas hum par apni rehmat barsa de,  
+Humein hamesha apni hifazat me rakh.  
+
+Ya Allah!  
+Humein behtareen zindagi ata farma,  
+Humein halal rizq de,  
+Humein imaan ki roshni ata farma,  
+Aur humein akhirat me jannat-ul-firdous ata farma.  
+
+Ya Allah!  
+Hamare dil ke dukh dho de,  
+Hamare gham door kar de,  
+Jo bhi musibat hai, jo bhi pareshani hai,  
+Ya Allah, tu sab door kar de!  
+
+Ya Allah!  
+Humein kabhi akela mat chhodna,  
+Hamare dil ki har fariyad sun lena,  
+Hamare gunahon ko maaf farma dena.  
+
+Ya Allah! Hum Tere pyaare Habib ﷺ ka wasila dete hain,  
+Humein har balaa se mehfooz farma,  
+Humein duniya aur aakhirat ki behtareen nematein ata farma.  
+
+### Dua for Palestine & Oppressed Muslims  
+
+Ya Allah!  
+Palestine ke mazloom bhai-behnon par apna karam farma,  
+Unke dukh door kar de,  
+Unke zakhm bhar de,  
+Unki madad farma, unko sabr aur himmat de.  
+
+Ya Allah!  
+Jo bachay bina maa-baap ke ho gaye,  
+Jo maaen apne laal kho chuki hain,  
+Jo ghar barbad ho chuke hain,  
+Un sabko apni rehmat me le le,  
+Aur zalimon se inka inteqam le!  
+
+Ya Allah!  
+Har mazloom ko insaaf ata farma,  
+Unhe quwwat de, unko madad farma.  
+Unke dukh, unke gham door kar,  
+Aur unko jannat-ul-firdous ka waasta dekar sabr de.  
+
+Ya Allah!  
+Duniya ke har mazloom ke liye,  
+Jo zulm sah rahe hain, jo takleef me hain,  
+Unke liye aasani paida farma,  
+Unki madad farma, unke dukh door farma.  
+
+Ya Rabb!  
+Hamari be-hisiyat aur be-amali ko maaf kar,  
+Humein behtar insan bana,  
+Humein sirat-ul-mustaqeem pe chala,  
+Aur humein duniya aur aakhirat dono me kamiyabi de.  
+
+Ameen Ya Rabbal ‘Alamin.  
+        </pre>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const fastingData = [
+                { date: "2025-03-02", day: "Sunday", sehri: "04:42 AM", iftar: "05:41 PM" },
+                { date: "2025-03-03", day: "Monday", sehri: "04:41 AM", iftar: "05:42 PM" },
+                { date: "2025-03-04", day: "Tuesday", sehri: "04:40 AM", iftar: "05:42 PM" },
+                { date: "2025-03-05", day: "Wednesday", sehri: "04:39 AM", iftar: "05:43 PM" },
+                { date: "2025-03-06", day: "Thursday", sehri: "04:38 AM", iftar: "05:43 PM" },
+                { date: "2025-03-07", day: "Friday", sehri: "04:38 AM", iftar: "05:43 PM" },
+                { date: "2025-03-08", day: "Saturday", sehri: "04:37 AM", iftar: "05:44 PM" },
+                { date: "2025-03-09", day: "Sunday", sehri: "04:36 AM", iftar: "05:44 PM" },
+                { date: "2025-03-10", day: "Monday", sehri: "04:35 AM", iftar: "05:45 PM" },
+                { date: "2025-03-11", day: "Tuesday", sehri: "04:34 AM", iftar: "05:45 PM" },
+                { date: "2025-03-12", day: "Wednesday", sehri: "04:33 AM", iftar: "05:45 PM" },
+                { date: "2025-03-13", day: "Thursday", sehri: "04:32 AM", iftar: "05:46 PM" },
+                { date: "2025-03-14", day: "Friday", sehri: "04:31 AM", iftar: "05:46 PM" },
+                { date: "2025-03-15", day: "Saturday", sehri: "04:30 AM", iftar: "05:47 PM" },
+                { date: "2025-03-16", day: "Sunday", sehri: "04:29 AM", iftar: "05:47 PM" },
+                { date: "2025-03-17", day: "Monday", sehri: "04:28 AM", iftar: "05:47 PM" },
+                { date: "2025-03-18", day: "Tuesday", sehri: "04:27 AM", iftar: "05:48 PM" },
+                { date: "2025-03-19", day: "Wednesday", sehri: "04:26 AM", iftar: "05:48 PM" },
+                { date: "2025-03-20", day: "Thursday", sehri: "04:25 AM", iftar: "05:48 PM" },
+                { date: "2025-03-21", day: "Friday", sehri: "04:24 AM", iftar: "05:49 PM" },
+                { date: "2025-03-22", day: "Saturday", sehri: "04:23 AM", iftar: "05:49 PM" },
+                { date: "2025-03-23", day: "Sunday", sehri: "04:22 AM", iftar: "05:50 PM" },
+                { date: "2025-03-24", day: "Monday", sehri: "04:21 AM", iftar: "05:50 PM" },
+                { date: "2025-03-25", day: "Tuesday", sehri: "04:20 AM", iftar: "05:50 PM" },
+                { date: "2025-03-26", day: "Wednesday", sehri: "04:19 AM", iftar: "05:51 PM" },
+                { date: "2025-03-27", day: "Thursday", sehri: "04:18 AM", iftar: "05:51 PM" },
+                { date: "2025-03-28", day: "Friday", sehri: "04:17 AM", iftar: "05:51 PM" },
+                { date: "2025-03-29", day: "Saturday", sehri: "04:16 AM", iftar: "05:52 PM" },
+                { date: "2025-03-30", day: "Sunday", sehri: "04:15 AM", iftar: "05:52 PM" },
+                { date: "2025-03-31", day: "Monday", sehri: "04:14 AM", iftar: "05:52 PM" }
+            ];
+
+            const today = new Date().toISOString().split('T')[0];
+            const todayData = fastingData.find(day => day.date === today);
+
+            if (todayData) {
+                document.getElementById("currentDate").textContent = todayData.day + " (" + todayData.date + ")";
+                document.getElementById("sehriTime").textContent = todayData.sehri;
+                document.getElementById("iftarTime").textContent = todayData.iftar;
+
+                const iftarTime = new Date(today + " " + todayData.iftar);
+                setInterval(() => {
+                    const now = new Date();
+                    const diff = iftarTime - now;
+                    if (diff > 0) {
+                        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                        const seconds = Math.floor((diff / 1000) % 60);
+                        document.getElementById("iftarCountdown").textContent = `${hours}h ${minutes}m ${seconds}s`;
+                    } else {
+                        document.getElementById("iftarCountdown").textContent = "Iftar Time!";
+                    }
+                }, 1000);
+            } else {
+                document.getElementById("currentDate").textContent = "No Data Available";
+                document.getElementById("sehriTime").textContent = "--";
+                document.getElementById("iftarTime").textContent = "--";
+                document.getElementById("iftarCountdown").textContent = "N/A";
+            }
+
+            fastingData.forEach((day, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${day.date}</td>
+                    <td>${day.day}</td>
+                    <td>${day.sehri}</td>
+                    <td>${day.iftar}</td>
+                `;
+                if (day.date === today) row.classList.add("highlight");
+                document.getElementById("fastingTable").appendChild(row);
+            });
+
+            // Dua Section
+            const duas = [
+                { label: "Sehri Dua:", text: "Wa bisawmi ghadinn nawaiytu min shahri Ramadan." },
+                { label: "Iftar Dua:", text: "Allahumma inni laka sumtu wa bika aamantu wa alaika tawakkaltu wa ala rizqika aftartu." }
+            ];
+
+            let currentDuaIndex = 0;
+            const duaTextElement = document.getElementById("duaText");
+
+            function changeDua() {
+                const dua = duas[currentDuaIndex];
+                duaTextElement.innerHTML = `<span class="label">${dua.label}</span> <span class="text">${dua.text}</span>`;
+                currentDuaIndex = (currentDuaIndex + 1) % duas.length;
+            }
+
+            changeDua(); // Initial call
+            setInterval(changeDua, 5000); // Change every 5 seconds
+
+            // Quranic Ayah Section
+            const ayahs = [
+                "Jo Allah par bharosa karta hai, Allah uske liye kaafi hai. (Quran 65:3)",
+                "Tumhare sabr ka phal tumhe zaroor milega. (Quran 94:5)",
+                "Har mushkil ke baad asaani hai. (Quran 94:6)",
+                "Aur Allah ki madad unhi ke saath hai jo uski raah mein jhuka kar chal rahe hain. (Quran 47:7)",
+                "Beshak, Allah sabr karne walon ke saath hai. (Quran 2:153)",
+                "Jab tumne Allah se maafi mangi, toh usne tumhe apni rahmat se bhar diya. (Quran 3:133)",
+                "Agar tum Allah ki madad karoge, toh Allah tumhari madad karega. (Quran 47:7)",
+                "Aur Allah ke paas jo hai, woh zindagi ke har gham se behtar hai. (Quran 9:20)",
+                "Tum mujhe yaad karo, main tumhe yaad karunga. (Quran 2:152)",
+                "Beshak, jo log iman lata hai aur apne amal se kaam karte hain, unke liye Allah ki taraf se behad bara ajar hai. (Quran 4:57)"
+            ];
+            let ayahIndex = 0;
+            function updateAyah() {
+                document.getElementById('ayah').innerText = ayahs[ayahIndex];
+                ayahIndex = (ayahIndex + 1) % ayahs.length;
+            }
+            setInterval(updateAyah, 10000);
+            updateAyah();
+        });
+    </script>
+
+</body>
+</html>
+<footer class="footer">
+    <p>
+       <b>Made with</b>  <i class="fas fa-heart heart-icon"></i> <strong>Sahil</strong>
+    </p>
+    <div class="social-icons">
+        <a href="https://www.linkedin.com/in/sahil-razaofficial" target="_blank" class="social-icon linkedin">
+            <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://wa.me/your-whatsapp-number" target="_blank" class="social-icon whatsapp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="https://github.com/your-github-username" target="_blank" class="social-icon github">
+            <i class="fab fa-github"></i>
+        </a>
+    </div>
+</footer>
+
+<style>
+/* Footer Styling */
+.footer {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 12px;
+    text-align: center;
+    margin-top: 12px;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Footer Text */
+.footer p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #FFD700;
+}
+
+/* Heart Icon Animation */
+.heart-icon {
+    color: red;
+    animation: heartbeat 1.5s infinite;
+}
+
+/* Social Icons Container */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 18px; /* Icons ke beech ka space */
+    margin-top: 8px;
+}
+
+/* Social Icon Styling */
+.social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;  /* Smaller size */
+    height: 35px;
+    font-size: 1rem;  /* Smaller icon */
+    color: #FFD700;
+    border-radius: 50%; /* Fully Circular */
+    transition: all 0.3s ease-in-out;
+    border: 1.5px solid #FFD700;
+    background: rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover Effects */
+.social-icon:hover {
+    transform: scale(1.1);
+    border-color: white;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Remove Underline */
+.social-icon a {
+    text-decoration: none;
+}
+
+/* Specific Icon Hover Colors */
+.linkedin:hover {
+    color: #0A66C2;
+}
+
+.whatsapp:hover {
+    color: #25D366;
+}
+
+.github:hover {
+    color: #333;
+}
+
+/* Heartbeat Animation */
+@keyframes heartbeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+.footer p {
+    font-size: 1.2rem;  /* Text Size Bada */
+    font-weight: bold;
+    color: #FFD700;
+}
+.heart-icon {
+    font-size: 1.3rem;  /* Heart Icon Ka Size Bada */
+    color: red;
+    animation: heartbeat 1.5s infinite;
+}
+
+html, body {
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+  </style>
